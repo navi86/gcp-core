@@ -1,46 +1,52 @@
-/* resource "google_container_registry" "registry" {
-  project  = local.project_infra.project_id
-  location = "EU"
-} */
-
-# docker push eu.gcr.io/gcplab-infra/jenkins:lts 
-
-/* resource "google_project_service" "cloudrun" {
-  project = local.project_infra.project_id
-  service = "run.googleapis.com"
-} */
-
-# resource "google_cloud_run_service" "jenkins" {
-#   name     = "jenkins"
-#   location = "europe-north1"
-#   project  = data.terraform_remote_state.core.outputs.project_infra_id
-
-#   template {
-#     spec {
-#       containers {
-#         image = "eu.gcr.io/gcplab-infra/jenkins:lts"
-#       }
-#     }
-#   }
-
-#   traffic {
-#     percent         = 100
-#     latest_revision = true
-#   }
-# }
-
-resource "google_service_account" "ansible" {
-  account_id   = "ansible"
-  display_name = "Ansible"
-  description  = "sa for getting information about running compute instances in env"
-  project      = local.project_infra.project_id
+# create ansible key file and store it in the project for possibility ansible connect to all instances in the project
+resource "tls_private_key" "ansible_ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
-resource "google_project_iam_binding" "compute_viewer" {
+resource "google_secret_manager_secret" "ansible_ssh" {
+  secret_id = "ansible_ssh"
   project = local.project_infra.project_id
-  role    = "roles/compute.viewer"
 
-  members = [
-    "serviceAccount:${google_service_account.ansible.email}",
-  ]
+  labels = {
+    jenkins-credentials-type = "ssh-user-private-key"
+    jenkins-credentials-username= "ansible"
+  }
+
+  replication {
+    automatic = true
+  }
+}
+
+resource "google_secret_manager_secret_version" "ansible_ssh" {
+
+  secret      = google_secret_manager_secret.ansible_ssh.id
+  secret_data = tls_private_key.ansible_ssh.private_key_pem
+}
+
+resource "google_compute_project_metadata" "linux_ssh" {
+  project = local.project_infra.project_id
+  metadata = {
+    ssh-keys = <<EOF
+      ansible:${chomp(tls_private_key.ansible_ssh.public_key_openssh)} ansible
+    EOF
+  }
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to metadata, because google add keys for accessing gke nodes 
+      # so terraform would every run try to delete extra keys 
+      metadata
+    ]
+  }
+}
+
+# install jenkins
+module "jenkins" {
+  source = "../jenkins"
+  
+  project = local.project_infra
+  gke_endpoint  = "https://${module.gke.endpoint}"
+  gke_cert      = base64decode(module.gke.ca_certificate)
+  tf_state_bucket      = local.tf_state_bucket
+  
 }

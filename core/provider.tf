@@ -8,6 +8,9 @@ terraform {
   required_version = "~> 1.0.0"
 }
 
-# provider "google" {
-#   project = local.project
-# }
+terraform {
+  backend "gcs" {
+    bucket  = "gcplab-tf"
+    prefix  = "core"
+  }
+}

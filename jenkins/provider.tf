@@ -1,4 +1,3 @@
-#
 terraform {
   required_providers {
     google = {
@@ -19,34 +18,20 @@ terraform {
 
 data "google_client_config" "default" {}
 
-
-data "terraform_remote_state" "infra" {
-  backend = "local"
-
-  config = {
-    path = "../infra/terraform.tfstate"
-  }
-}
-
-data "terraform_remote_state" "core" {
-  backend = "local"
-
-  config = {
-    path = "../core/terraform.tfstate"
-  }
-}
-
 provider "helm" {
   kubernetes {
-    host                   = local.gke_endpoint
+    #host                   = local.gke_endpoint
+    #cluster_ca_certificate = local.gke_cert
+    host                   = var.gke_endpoint
+    cluster_ca_certificate = var.gke_cert
     token                  = data.google_client_config.default.access_token
-    cluster_ca_certificate = local.gke_cert
   }
 }
 
 provider "kubernetes" {
-  host = local.gke_endpoint
-
+  #host = local.gke_endpoint
+  #cluster_ca_certificate = local.gke_cert
+  host                   = var.gke_endpoint
+  cluster_ca_certificate = var.gke_cert
   token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = local.gke_cert
 }

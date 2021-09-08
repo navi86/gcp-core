@@ -8,12 +8,20 @@ terraform {
   required_version = "~> 1.0.0"
 }
 
+terraform {
+  backend "gcs" {
+    bucket  = "gcplab-tf"
+    prefix  = "infra"
+  }
+}
+
+
 data "google_client_config" "default" {}
 
 data "terraform_remote_state" "core" {
-  backend = "local"
-
+  backend = "gcs" 
   config = {
-    path = "../core/terraform.tfstate"
+    bucket  = "gcplab-tf"
+    prefix  = "core"
   }
 }

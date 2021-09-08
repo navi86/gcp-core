@@ -1,30 +1,11 @@
 locals {
   project_infra = data.terraform_remote_state.core.outputs.project_infra
+  tf_state_bucket = data.terraform_remote_state.core.outputs.tf_state_bucket
 }
 
 variable "region" {
   type    = string
   default = "us-central1"
-}
-
-variable "gke_network_main" {
-  type = object({
-    vpc_name = string
-    us-central1 = object({
-      primary_name      = string
-      ip_range_pods     = string
-      ip_range_services = string
-    })
-    }
-  )
-  default = {
-    vpc_name = "ec-main-dev-vpc-0"
-    us-central1 = {
-      primary_name      = "ec-main-na-cent1-dev-subnet"
-      ip_range_pods     = "ec-main-na-cent1-0-pods"
-      ip_range_services = "ec-main-na-cent1-0-services"
-    }
-  }
 }
 
 variable "region_subnets" {
