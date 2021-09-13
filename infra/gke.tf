@@ -19,9 +19,22 @@ module "gke" {
   ip_range_pods     = google_compute_subnetwork.us_central1_subnet.secondary_ip_range.0.range_name
   ip_range_services = google_compute_subnetwork.us_central1_subnet.secondary_ip_range.1.range_name
 
-  http_load_balancing        = true
+  # enable this for deploying private cluster
+/*   master_ipv4_cidr_block     = "172.16.0.0/28"
+
+  master_authorized_networks = [
+    {
+      cidr_block   = google_compute_subnetwork.us_central1_subnet.ip_cidr_range
+      display_name = "VPC"
+    },
+  enable_private_endpoint    = true
+  ] */
+
+  http_load_balancing        = false
   horizontal_pod_autoscaling = true
   network_policy             = false
+  enable_private_nodes       = true
+
 
   remove_default_node_pool = true
 
@@ -39,7 +52,6 @@ module "gke" {
       image_type                = "COS"
       auto_repair               = true
       auto_upgrade              = true
-      service_account           = "project-service-account@<PROJECT ID>.iam.gserviceaccount.com"
       preemptible               = false
       initial_node_count        = 2
       service_account           = google_service_account.gke_nodes.email

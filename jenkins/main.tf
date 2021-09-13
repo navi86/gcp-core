@@ -8,7 +8,7 @@ resource "google_service_account" "jenkins" {
 
 resource "google_project_iam_binding" "compute_viewer" {
   project      = var.project.project_id
-  role    = "roles/compute.viewer"
+  role    = "roles/compute.admin"
 
   members = [
     "serviceAccount:${google_service_account.jenkins.email}",
@@ -123,8 +123,6 @@ resource "helm_release" "jenkins" {
 
   repository = "https://charts.jenkins.io"
   chart      = "jenkins"
-
-  timeout = 30 # there is no benefit to wait more than 60 seconds because it's probably something wrong if timeout is exceeded
 
   set {
       name  = "controller.adminPassword"
