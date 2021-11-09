@@ -69,7 +69,7 @@ resource "google_secret_manager_secret" "github_access_token" {
 resource "google_secret_manager_secret_version" "github_access_token" {
 
   secret      = google_secret_manager_secret.github_access_token.id
-  secret_data = "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"
+  secret_data = "store secret in a secret place"
 }
 
 # enable jenkins sa using workload identity in nameskape
