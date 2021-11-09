@@ -13,7 +13,7 @@ module "gke" {
   zones              = ["us-central1-a", "us-central1-b", "us-central1-f"]
   network            = google_compute_network.shared.name
   subnetwork         = google_compute_subnetwork.us_central1_subnet.name
-  kubernetes_version = "1.20.9-gke.2100"
+  kubernetes_version = var.kubernetes_version
 
   # Default ranges will be used if empty
   ip_range_pods     = google_compute_subnetwork.us_central1_subnet.secondary_ip_range.0.range_name

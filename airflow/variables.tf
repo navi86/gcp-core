@@ -1,6 +1,6 @@
 variable "application_name" {
   type = string
-  default = "gcplab2"
+  default = "gcplab"
 }
 
 variable "application_folder" {
@@ -13,18 +13,15 @@ variable "infrastructure_folder" {
   default = "infra"
 }
 
-variable "service_levels" {
-  type = map(string)
-  default = {
-    "snd" : "Sandbox",
-    "dev" : "Development",
-  }
+variable "service_level" {
+  type = string
+  default = "snd"
 }
 
-variable "billing_account_id" {
+/* variable "billing_account_id" {
   type = string
-  default = "01E57A-701C87-EBF8FA"
-}
+  default = "011AF5-A3572E-042E59"
+} */
 
 variable "region"{
   type = string

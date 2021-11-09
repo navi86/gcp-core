@@ -17,6 +17,12 @@ variable "region_subnets" {
   }
 }
 
+variable "kubernetes_version" {
+  type = string
+  default = "1.20.10-gke.1600"
+  
+}
+
 variable "newbits" {
   type    = number
   default = 4

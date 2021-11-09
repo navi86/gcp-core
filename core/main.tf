@@ -35,6 +35,24 @@ resource "google_project_service" "infra_container" {
   disable_dependent_services = false
 }
 
+resource "google_project_service" "infra_cloudrun" {
+  project = google_project.infra.project_id
+  service = "run.googleapis.com"
+
+  timeouts {
+    create = "30m"
+    update = "40m"
+  }
+
+  disable_dependent_services = false
+}
+
+resource "google_project_service" "infra_workflows" {
+  project            = google_project.infra.project_id
+  service            = "workflows.googleapis.com"
+  disable_on_destroy = false
+}
+
 resource "google_project_service" "infra_secretmanager" {
   project = google_project.infra.project_id
   service = "secretmanager.googleapis.com"
@@ -45,6 +63,22 @@ resource "google_project_service" "infra_secretmanager" {
   }
 
   disable_dependent_services = false
+}
+
+resource "google_project_service" "cloudfunctions" {
+  project = google_project.infra.project_id
+  service = "cloudfunctions.googleapis.com"
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
+resource "google_project_service" "cloudbuild" {
+  project = google_project.infra.project_id
+  service = "cloudbuild.googleapis.com"
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
 }
 
 # create project for each environment
@@ -59,6 +93,20 @@ resource "google_project" "service_levels" {
   }
 
  billing_account = var.billing_account_id
+}
+
+# enable api for each environment
+resource "google_project_service" "service_levels_composer" {
+  for_each   = var.service_levels
+  project = "${lower(var.application_name)}-${lower(each.key)}"
+  service = "composer.googleapis.com"
+
+  timeouts {
+    create = "30m"
+    update = "40m"
+  }
+
+  disable_dependent_services = false
 }
 
 # create gcs bucket for storing terraform state. this gcs bucket also contains state of this module(core)
