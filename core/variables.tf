@@ -1,15 +1,15 @@
 variable "application_name" {
-  type = string
+  type    = string
   default = "gcplab2"
 }
 
 variable "application_folder" {
-  type = string
+  type    = string
   default = "app"
-} 
+}
 
 variable "infrastructure_folder" {
-  type = string
+  type    = string
   default = "infra"
 }
 
@@ -22,11 +22,11 @@ variable "service_levels" {
 }
 
 variable "billing_account_id" {
-  type = string
+  type    = string
   default = "01E57A-701C87-EBF8FA"
 }
 
-variable "region"{
-  type = string
+variable "region" {
+  type    = string
   default = "us-central1"
 }

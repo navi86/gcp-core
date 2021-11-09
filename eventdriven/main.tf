@@ -23,16 +23,16 @@ resource "google_pubsub_topic" "file_update" {
 }
 
 resource "google_pubsub_subscription" "retention" {
-  name  = "files-retention"
-  topic = google_pubsub_topic.file_update.name
-  project = local.project_infra.project_id
+  name                       = "files-retention"
+  topic                      = google_pubsub_topic.file_update.name
+  project                    = local.project_infra.project_id
   message_retention_duration = "604800s"
 }
 
 resource "google_pubsub_topic_iam_binding" "topic_eventdriven" {
   project = local.project_infra.project_id
-  topic = google_pubsub_topic.file_update.name
-  role = "roles/editor"
+  topic   = google_pubsub_topic.file_update.name
+  role    = "roles/editor"
   members = [
     #"serviceAccount:${google_service_account.pubsub.email}",
     "serviceAccount:service-${local.project_infra.number}@gs-project-accounts.iam.gserviceaccount.com"
@@ -40,9 +40,9 @@ resource "google_pubsub_topic_iam_binding" "topic_eventdriven" {
 }
 
 resource "google_storage_notification" "notification" {
-  bucket              = google_storage_bucket.files.name
-  payload_format      = "JSON_API_V1"
-  topic               = google_pubsub_topic.file_update.id
-  event_types         = ["OBJECT_FINALIZE", "OBJECT_METADATA_UPDATE"]
-  depends_on = [google_pubsub_topic_iam_binding.topic_eventdriven]
+  bucket         = google_storage_bucket.files.name
+  payload_format = "JSON_API_V1"
+  topic          = google_pubsub_topic.file_update.id
+  event_types    = ["OBJECT_FINALIZE", "OBJECT_METADATA_UPDATE"]
+  depends_on     = [google_pubsub_topic_iam_binding.topic_eventdriven]
 }

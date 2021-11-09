@@ -15,16 +15,16 @@ variable "project" {
 
 variable "gke_endpoint" {
   description = "gke endpoint"
-  type = string
+  type        = string
 }
 
 variable "gke_cert" {
   description = "project infra object"
-  type = string
+  type        = string
 }
 
 variable "tf_state_bucket" {
-  type = string
+  type        = string
   description = "Terraform state bucket"
 }
 

@@ -6,11 +6,11 @@ resource "tls_private_key" "ansible_ssh" {
 
 resource "google_secret_manager_secret" "ansible_ssh" {
   secret_id = "ansible_ssh"
-  project = local.project_infra.project_id
+  project   = local.project_infra.project_id
 
   labels = {
-    jenkins-credentials-type = "ssh-user-private-key"
-    jenkins-credentials-username= "ansible"
+    jenkins-credentials-type     = "ssh-user-private-key"
+    jenkins-credentials-username = "ansible"
   }
 
   replication {
@@ -43,10 +43,10 @@ resource "google_compute_project_metadata" "linux_ssh" {
 # install jenkins
 module "jenkins" {
   source = "../jenkins"
-  
-  project = local.project_infra
-  gke_endpoint  = "https://${module.gke.endpoint}"
-  gke_cert      = base64decode(module.gke.ca_certificate)
-  tf_state_bucket      = local.tf_state_bucket
-  
+
+  project         = local.project_infra
+  gke_endpoint    = "https://${module.gke.endpoint}"
+  gke_cert        = base64decode(module.gke.ca_certificate)
+  tf_state_bucket = local.tf_state_bucket
+
 }

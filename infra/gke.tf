@@ -6,7 +6,7 @@ resource "google_service_account" "gke_nodes" {
 }
 
 module "gke" {
-  source = "terraform-google-modules/kubernetes-engine/google//modules/beta-private-cluster"
+  source             = "terraform-google-modules/kubernetes-engine/google//modules/beta-private-cluster"
   project_id         = local.project_infra.project_id
   name               = "gke-test-1"
   region             = var.region
@@ -20,7 +20,7 @@ module "gke" {
   ip_range_services = google_compute_subnetwork.us_central1_subnet.secondary_ip_range.1.range_name
 
   # enable this for deploying private cluster
-/*   master_ipv4_cidr_block     = "172.16.0.0/28"
+  /*   master_ipv4_cidr_block     = "172.16.0.0/28"
 
   master_authorized_networks = [
     {

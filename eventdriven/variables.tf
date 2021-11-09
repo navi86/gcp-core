@@ -10,6 +10,6 @@ variable "region" {
 }
 
 variable "application_name" {
-  type = string
+  type    = string
   default = "gcplab2"
 }

@@ -10,8 +10,8 @@ terraform {
 
 terraform {
   backend "gcs" {
-    bucket  = "gcplab2-tf"
-    prefix  = "eventdriven"
+    bucket = "gcplab2-tf"
+    prefix = "eventdriven"
   }
 }
 
@@ -19,9 +19,9 @@ terraform {
 data "google_client_config" "default" {}
 
 data "terraform_remote_state" "core" {
-  backend = "gcs" 
+  backend = "gcs"
   config = {
-    bucket  = "gcplab2-tf"
-    prefix  = "core"
+    bucket = "gcplab2-tf"
+    prefix = "core"
   }
 }

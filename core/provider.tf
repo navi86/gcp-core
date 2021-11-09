@@ -10,7 +10,7 @@ terraform {
 
 terraform {
   backend "gcs" {
-    bucket  = "gcplab2-tf"
-    prefix  = "core"
+    bucket = "gcplab2-tf"
+    prefix = "core"
   }
 }

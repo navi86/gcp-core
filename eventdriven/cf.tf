@@ -22,21 +22,21 @@ resource "google_cloudfunctions_function" "calculate_files" {
   name        = "calculate_files"
   description = "List files in bucket"
   runtime     = "python39"
-  project = local.project_infra.project_id
-  region = var.region
+  project     = local.project_infra.project_id
+  region      = var.region
 
   available_memory_mb   = 128
   source_archive_bucket = google_storage_bucket.cf.name
   source_archive_object = google_storage_bucket_object.cf_zip.name
   #trigger_http          = false
-  entry_point           = "hello_pubsub"
+  entry_point = "hello_pubsub"
 
   event_trigger {
     event_type = "google.pubsub.topic.publish"
-    resource = google_pubsub_topic.file_update.name
+    resource   = google_pubsub_topic.file_update.name
     failure_policy {
       retry = true
     }
   }
-  
+
 }

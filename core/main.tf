@@ -7,7 +7,7 @@ resource "google_project" "infra" {
     application = lower(var.application_name)
   }
 
- billing_account = var.billing_account_id
+  billing_account = var.billing_account_id
 }
 
 # enable google api for project
@@ -33,6 +33,7 @@ resource "google_project_service" "infra_container" {
   }
 
   disable_dependent_services = false
+  disable_on_destroy         = false
 }
 
 resource "google_project_service" "infra_cloudrun" {
@@ -45,12 +46,15 @@ resource "google_project_service" "infra_cloudrun" {
   }
 
   disable_dependent_services = false
+  disable_on_destroy         = false
 }
 
 resource "google_project_service" "infra_workflows" {
-  project            = google_project.infra.project_id
-  service            = "workflows.googleapis.com"
-  disable_on_destroy = false
+  project = google_project.infra.project_id
+  service = "workflows.googleapis.com"
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
 }
 
 resource "google_project_service" "infra_secretmanager" {
@@ -63,6 +67,7 @@ resource "google_project_service" "infra_secretmanager" {
   }
 
   disable_dependent_services = false
+  disable_on_destroy         = false
 }
 
 resource "google_project_service" "cloudfunctions" {
@@ -86,20 +91,20 @@ resource "google_project" "service_levels" {
   for_each   = var.service_levels
   name       = "${var.application_name} ${each.value} project"
   project_id = "${lower(var.application_name)}-${lower(each.key)}"
-#  folder_id  = google_folder.application.folder_id
+  #  folder_id  = google_folder.application.folder_id
   labels = {
     application = lower(var.application_name)
     environment = lower(each.key)
   }
 
- billing_account = var.billing_account_id
+  billing_account = var.billing_account_id
 }
 
 # enable api for each environment
 resource "google_project_service" "service_levels_composer" {
-  for_each   = var.service_levels
-  project = "${lower(var.application_name)}-${lower(each.key)}"
-  service = "composer.googleapis.com"
+  for_each = var.service_levels
+  project  = "${lower(var.application_name)}-${lower(each.key)}"
+  service  = "composer.googleapis.com"
 
   timeouts {
     create = "30m"
@@ -107,6 +112,7 @@ resource "google_project_service" "service_levels_composer" {
   }
 
   disable_dependent_services = false
+  disable_on_destroy         = false
 }
 
 # create gcs bucket for storing terraform state. this gcs bucket also contains state of this module(core)

@@ -2,7 +2,7 @@
 resource "google_service_account" "workflows_service_account" {
   account_id   = "workflows-sa"
   display_name = "Workflows Service Account"
-  project = local.project_infra.project_id
+  project      = local.project_infra.project_id
 }
 
 resource "google_workflows_workflow" "workflows_example" {

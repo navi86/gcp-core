@@ -5,7 +5,7 @@ locals {
 
 # create gc projects of infrastructure
 resource "google_composer_environment" "test" {
-  name   = "${var.application_name}-${var.service_level}"
+  name    = "${var.application_name}-${var.service_level}"
   project = local.project_id
-  region = var.region
+  region  = var.region
 }

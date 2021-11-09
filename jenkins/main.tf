@@ -7,7 +7,7 @@ resource "google_service_account" "jenkins" {
 }
 
 resource "google_project_iam_binding" "compute_viewer" {
-  project      = var.project.project_id
+  project = var.project.project_id
   role    = "roles/compute.admin"
 
   members = [
@@ -16,7 +16,7 @@ resource "google_project_iam_binding" "compute_viewer" {
 }
 
 resource "google_project_iam_binding" "secretmanager_secretAccessor" {
-  project      = var.project.project_id
+  project = var.project.project_id
   role    = "roles/secretmanager.secretAccessor"
 
   members = [
@@ -25,7 +25,7 @@ resource "google_project_iam_binding" "secretmanager_secretAccessor" {
 }
 
 resource "google_project_iam_binding" "secretmanager_viewer" {
-  project      = var.project.project_id
+  project = var.project.project_id
   role    = "roles/secretmanager.viewer"
 
   members = [
@@ -35,7 +35,7 @@ resource "google_project_iam_binding" "secretmanager_viewer" {
 
 resource "google_storage_bucket_iam_binding" "storage_objectAdmin" {
   bucket = var.tf_state_bucket
-  role    = "roles/storage.objectAdmin"
+  role   = "roles/storage.objectAdmin"
 
   members = [
     "serviceAccount:${google_service_account.jenkins.email}",
@@ -54,11 +54,11 @@ resource "kubernetes_namespace" "jenkins" {
 # jenkins credentials
 resource "google_secret_manager_secret" "github_access_token" {
   secret_id = "github_access_token"
-  project      = var.project.project_id
+  project   = var.project.project_id
 
   labels = {
-    jenkins-credentials-type = "username-password"
-    jenkins-credentials-username= "github_access_token"
+    jenkins-credentials-type     = "username-password"
+    jenkins-credentials-username = "github_access_token"
   }
 
   replication {
@@ -93,7 +93,7 @@ resource "google_service_account_iam_member" "workload_identity_iam" {
 # generate jenkins password
 resource "google_secret_manager_secret" "jenkins_password" {
   secret_id = "jenkins_password"
-  project      = var.project.project_id
+  project   = var.project.project_id
 
   labels = {
     label = "jenkins"
@@ -125,58 +125,58 @@ resource "helm_release" "jenkins" {
   chart      = "jenkins"
 
   set {
-      name  = "controller.adminPassword"
-      value = random_password.jenkins_password.result
-    }
-  
+    name  = "controller.adminPassword"
+    value = random_password.jenkins_password.result
+  }
+
   set {
     name  = "controller.ingress.enabled"
     value = true
   }
 
-# specify list of required plugins to be installed in jenkins
+  # specify list of required plugins to be installed in jenkins
   set {
     name  = "controller.additionalPlugins"
     value = "{${join(",", var.jenkins_plugins)}}"
   }
 
-# configure custom jenkins agent image due to the requirements to have gcloud and ansible
+  # configure custom jenkins agent image due to the requirements to have gcloud and ansible
   set {
-    name = "agent.image"
+    name  = "agent.image"
     value = "navi86/jenkins-inbound-agent"
   }
 
   set {
-    name = "agent.tag"
+    name  = "agent.tag"
     value = "1.0"
   }
 
-# we are using gcp workcload identity so we we should create it in terraform and properly configure
-set {
-    name = "serviceAccount.create"
+  # we are using gcp workcload identity so we we should create it in terraform and properly configure
+  set {
+    name  = "serviceAccount.create"
     value = false
   }
-set {
-    name = "serviceAccount.name"
+  set {
+    name  = "serviceAccount.name"
     value = kubernetes_service_account.jenkins.metadata.0.name
   }
 
-# specify SA for jenkins agent pod
-set {
-    name = "serviceAccountAgent.create"
+  # specify SA for jenkins agent pod
+  set {
+    name  = "serviceAccountAgent.create"
     value = false
   }
-set {
-    name = "serviceAccountAgent.name"
+  set {
+    name  = "serviceAccountAgent.name"
     value = kubernetes_service_account.jenkins.metadata.0.name
   }
 
-# Jenkins as code
-values = [
+  # Jenkins as code
+  values = [
     templatefile("${path.module}/files/JCasC.yml",
-    {
-      project  = var.project.project_id
-    }
+      {
+        project = var.project.project_id
+      }
     )
   ]
 }

@@ -10,8 +10,8 @@ terraform {
 
 terraform {
   backend "gcs" {
-    bucket  = "gcplab-tf"
-    prefix  = "infra"
+    bucket = "gcplab-tf"
+    prefix = "infra"
   }
 }
 
@@ -19,9 +19,9 @@ terraform {
 data "google_client_config" "default" {}
 
 data "terraform_remote_state" "core" {
-  backend = "gcs" 
+  backend = "gcs"
   config = {
-    bucket  = "gcplab-tf"
-    prefix  = "core"
+    bucket = "gcplab-tf"
+    prefix = "core"
   }
 }

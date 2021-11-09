@@ -1,5 +1,5 @@
 locals {
-  project_infra = data.terraform_remote_state.core.outputs.project_infra
+  project_infra   = data.terraform_remote_state.core.outputs.project_infra
   tf_state_bucket = data.terraform_remote_state.core.outputs.tf_state_bucket
 }
 
@@ -18,9 +18,9 @@ variable "region_subnets" {
 }
 
 variable "kubernetes_version" {
-  type = string
+  type    = string
   default = "1.20.10-gke.1600"
-  
+
 }
 
 variable "newbits" {
